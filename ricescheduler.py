@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('semester', help='Spring or Fall')
 parser.add_argument('year', help='Year as YYYY')
 parser.add_argument('days', help='String of class days as MTWRF')
-parser.add_argument('--show-cancelled', action='store_true', help='Show no class dates in output')
+parser.add_argument('--verbose', action='store_true', help='Show cancelled classes in output')
 args = parser.parse_args()
 
 def locale():
@@ -90,4 +90,4 @@ def print_classes(possible_classes, no_classes, fmt, show_no=None):
 url = url(args.semester, args.year)
 day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
 possible_classes, no_classes = schedule([day_index[d] for d in args.days])
-print_classes(possible_classes, no_classes, 'dddd, MMMM D, YYYY', show_no=True)
+print_classes(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose)
