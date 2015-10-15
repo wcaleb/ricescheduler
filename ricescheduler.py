@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 def check_args():
     checks = []
-    checks.append(len([c for c in args.days if c not in 'MTWRF']) > 0)
+    checks.append(set(args.days + 'MTWRF') != set('MTWRF'))
     checks.append(args.semester.lower() not in ['spring','fall'])
     if True in checks:
         print 'Input error in your arguments.'
@@ -93,9 +93,9 @@ def print_classes(possible_classes, no_classes, fmt, show_no=None):
     course = []
     for d in possible_classes:
         if d not in no_classes:
-            course.append(d.format(fmt))
+            course.append('## ' + d.format(fmt) + '\n[Fill in class plan]\n\n')
         elif show_no:
-            course.append(d.format(fmt) + ' - NO CLASS')
+            course.append('## ' + d.format(fmt) + ' - NO CLASS')
     print '\n'.join(course)
 
 check_args()
