@@ -8,10 +8,22 @@ from itertools import cycle
 
 parser = argparse.ArgumentParser()
 parser.add_argument('semester', help='Spring or Fall')
-parser.add_argument('year', help='Year as YYYY')
+parser.add_argument('year', type=int, help='Year as YYYY')
 parser.add_argument('days', help='String of class days as MTWRF')
 parser.add_argument('--verbose', action='store_true', help='Show cancelled classes in output')
 args = parser.parse_args()
+
+def check_args():
+    checks = []
+    checks.append(len([c for c in args.days if c not in 'MTWRF']) > 0)
+    checks.append(args.semester.lower() not in ['spring','fall'])
+    if True in checks:
+        print 'Input error in your arguments.'
+        parser.print_help()
+        sys.exit(1)
+    if int(args.year) < 2009:
+        print 'ERROR: The script only works for the years 2009 to the present.'
+        sys.exit(1)
 
 def locale():
     return arrow.locales.get_locale('en_us')
@@ -86,11 +98,8 @@ def print_classes(possible_classes, no_classes, fmt, show_no=None):
             course.append(d.format(fmt) + ' - NO CLASS')
     print '\n'.join(course)
 
-if int(args.year) < 2009:
-    print 'The script only works for the years 2009 to the present.'
-    sys.exit(0)
-
-url = url(args.semester, args.year)
+check_args()
+url = url(args.semester, str(args.year))
 day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
 possible_classes, no_classes = schedule([day_index[d] for d in args.days])
 print_classes(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose)
