@@ -2,9 +2,17 @@
 
 import re
 import urllib2
-import arrow
+import argparse 
+import arrow # http://crsmithdev.com/arrow/
 from bs4 import BeautifulSoup
 from itertools import cycle
+
+parser = argparse.ArgumentParser()
+parser.add_argument('semester', help='Spring or Fall')
+parser.add_argument('year', help='Year as YYYY')
+parser.add_argument('days', help='String of class days as MTWRF')
+parser.add_argument('--show-cancelled', action='store_true', help='Show no class dates in output')
+args = parser.parse_args()
 
 def locale():
     return arrow.locales.get_locale('en_us')
@@ -12,7 +20,10 @@ def locale():
 def regex(keyword):
     return re.compile('(.*)' + keyword + '(.*)', re.DOTALL)
 
-url = 'https://registrar.rice.edu/calendars/fall15/'
+def url(sem, year): 
+    baseurl = 'https://registrar.rice.edu/calendars/'
+    return baseurl + sem.lower() + year.lstrip('20') + '/'
+
 def fetch_registrar_table(url):
     ''' Get academic calendar table from registrar website '''
     html = urllib2.urlopen(url).read()
@@ -76,6 +87,7 @@ def print_classes(possible_classes, no_classes, fmt, show_no=None):
             course.append(d.format(fmt) + ' - NO CLASS')
     print '\n'.join(course)
 
-possible_classes, no_classes = schedule(['Tuesday','Thursday'])
+url = url(args.semester, args.year)
+day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
+possible_classes, no_classes = schedule([day_index[d] for d in args.days])
 print_classes(possible_classes, no_classes, 'dddd, MMMM D, YYYY', show_no=True)
-
