@@ -1,7 +1,6 @@
 #!/usr/local/bin/python
 
-import re
-import urllib2
+import re, sys, urllib2
 import argparse 
 import arrow # http://crsmithdev.com/arrow/
 from bs4 import BeautifulSoup
@@ -22,7 +21,7 @@ def regex(keyword):
 
 def url(sem, year): 
     baseurl = 'https://registrar.rice.edu/calendars/'
-    return baseurl + sem.lower() + year.lstrip('20') + '/'
+    return baseurl + sem.lower() + year[-2:] + '/'
 
 def fetch_registrar_table(url):
     ''' Get academic calendar table from registrar website '''
@@ -86,6 +85,10 @@ def print_classes(possible_classes, no_classes, fmt, show_no=None):
         elif show_no:
             course.append(d.format(fmt) + ' - NO CLASS')
     print '\n'.join(course)
+
+if int(args.year) < 2009:
+    print 'The script only works for the years 2009 to the present.'
+    sys.exit(0)
 
 url = url(args.semester, args.year)
 day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
