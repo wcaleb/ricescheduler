@@ -1,0 +1,1 @@
+A script to automatically generate a list of class meetings for a semester-long Rice class, using calendar data scraped from the registrar's website. Currently only Spring and Fall courses are supported.
