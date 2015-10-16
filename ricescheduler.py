@@ -3,6 +3,7 @@
 import re, sys, urllib2
 import argparse 
 import arrow # http://crsmithdev.com/arrow/
+import pypandoc # https://github.com/bebraw/pypandoc
 from bs4 import BeautifulSoup
 from itertools import cycle
 
@@ -82,24 +83,38 @@ def parse_registrar_table(table):
                 no_classes.append(date)
     return first_day, last_day, no_classes
 
-def schedule(weekdays):
+def sorted_classes(weekdays):
     ''' Take class meetings as list of day names, return lists of Arrow objects '''
     first_day, last_day, no_classes = parse_registrar_table(fetch_registrar_table(url))
     semester = range_of_days(first_day[0], last_day[0])
     possible_classes = [d for d in semester if locale().day_name(d.isoweekday()) in weekdays]
     return possible_classes, no_classes
 
-def print_classes(possible_classes, no_classes, fmt, show_no=None):
+def schedule(possible_classes, no_classes, fmt, show_no=None):
+    ''' Take lists of Arrow objects, return list of course meetings as strings '''
     course = []
     for d in possible_classes:
         if d not in no_classes:
-            course.append('## ' + d.format(fmt) + '\n[Fill in class plan]\n\n')
+            course.append(d.format(fmt))
         elif show_no:
-            course.append('## ' + d.format(fmt) + ' - NO CLASS')
-    print '\n'.join(course)
+            course.append(d.format(fmt) + ' - NO CLASS')
+    return course
+
+def output_plain(schedule):
+    print '\n'.join(schedule)
+
+def output_docx(schedule, args):
+    course = ['## ' + d + '\n' for d in schedule]
+    course = [d + '[Fill in class plan]\n\n' if 'NO CLASS' not in d else d for d in course]
+    md_args = ['--template=./templates/syllabus.md', '--to=markdown',
+            '--variable=semester:' + args.semester.capitalize(), '--variable=year:' + str(args.year)]
+    md_output = pypandoc.convert('\n'.join(course), 'md', 'md', md_args)
+    docx_args = ['--reference-docx=./templates/syllabus.docx']
+    docx_output = pypandoc.convert(md_output, 'docx', 'md', docx_args, outputfile='output.docx')
+    assert docx_output == ''
 
 check_args()
 url = url(args.semester, str(args.year))
 day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
-possible_classes, no_classes = schedule([day_index[d] for d in args.days])
-print_classes(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose)
+possible_classes, no_classes = sorted_classes([day_index[d] for d in args.days])
+output_docx(schedule(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose), args)
