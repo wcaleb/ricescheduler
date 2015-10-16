@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>Rice Scheduler</title>
+    </head>
+    <body>
+                <p>What days does your class meet?</p></p>
+                <form method="post" action="{{ url_for('classes') }}">
+                  <select name="semester">
+                      <option value="Spring">Spring</option>
+                      <option value="Fall">Fall</option>
+                  </select>
+                  <select name="year">
+                      {% for year in years %}
+                          <option value="{{year}}">{{year}}</option>
+                      {% endfor %}
+                  </select><br/>
+                  <input type="checkbox" name="days" value="Monday">Monday<br/>
+                  <input type="checkbox" name="days" value="Tuesday">Tuesday<br/>
+                  <input type="checkbox" name="days" value="Wednesday">Wednesday<br/>
+                  <input type="checkbox" name="days" value="Thursday">Thursday<br/>
+                  <input type="checkbox" name="days" value="Friday">Friday<br/>
+                  <input type="submit" value="Submit">
+                </form>
+    </body>
+</html>

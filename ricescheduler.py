@@ -1,30 +1,10 @@
 #!/usr/local/bin/python
 
 import re, sys, urllib2
-import argparse 
 import arrow # http://crsmithdev.com/arrow/
 import pypandoc # https://github.com/bebraw/pypandoc
 from bs4 import BeautifulSoup
 from itertools import cycle
-
-parser = argparse.ArgumentParser()
-parser.add_argument('semester', help='Spring or Fall')
-parser.add_argument('year', type=int, help='Year as YYYY')
-parser.add_argument('days', help='String of class days as MTWRF')
-parser.add_argument('--verbose', action='store_true', help='Show cancelled classes in output')
-args = parser.parse_args()
-
-def check_args():
-    checks = []
-    checks.append(set(args.days + 'MTWRF') != set('MTWRF'))
-    checks.append(args.semester.lower() not in ['spring','fall'])
-    if True in checks:
-        print 'Input error in your arguments.'
-        parser.print_help()
-        sys.exit(1)
-    if args.year < 2009:
-        print 'ERROR: The script only works for the years 2009 to the present.'
-        sys.exit(1)
 
 def locale():
     return arrow.locales.get_locale('en_us')
@@ -32,9 +12,10 @@ def locale():
 def regex(keyword):
     return re.compile('(.*)' + keyword + '(.*)', re.DOTALL)
 
-def url(sem, year): 
+def url(semester, year): 
+    ''' Takes semester and year as strings, returns url to calendar '''
     baseurl = 'https://registrar.rice.edu/calendars/'
-    return baseurl + sem.lower() + year[-2:] + '/'
+    return baseurl + semester.lower() + year[-2:] + '/'
 
 def fetch_registrar_table(url):
     ''' Get academic calendar table from registrar website '''
@@ -83,7 +64,7 @@ def parse_registrar_table(table):
                 no_classes.append(date)
     return first_day, last_day, no_classes
 
-def sorted_classes(weekdays):
+def sorted_classes(weekdays, url):
     ''' Take class meetings as list of day names, return lists of Arrow objects '''
     first_day, last_day, no_classes = parse_registrar_table(fetch_registrar_table(url))
     semester = range_of_days(first_day[0], last_day[0])
@@ -103,18 +84,12 @@ def schedule(possible_classes, no_classes, fmt, show_no=None):
 def output_plain(schedule):
     print '\n'.join(schedule)
 
-def output_docx(schedule, args):
+def output_docx(schedule, semester, year):
     course = ['## ' + d + '\n' for d in schedule]
     course = [d + '[Fill in class plan]\n\n' if 'NO CLASS' not in d else d for d in course]
     md_args = ['--template=./templates/syllabus.md', '--to=markdown',
-            '--variable=semester:' + args.semester.capitalize(), '--variable=year:' + str(args.year)]
+            '--variable=semester:' + semester.capitalize(), '--variable=year:' + year]
     md_output = pypandoc.convert('\n'.join(course), 'md', 'md', md_args)
     docx_args = ['--reference-docx=./templates/syllabus.docx']
     docx_output = pypandoc.convert(md_output, 'docx', 'md', docx_args, outputfile='output.docx')
     assert docx_output == ''
-
-check_args()
-url = url(args.semester, str(args.year))
-day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
-possible_classes, no_classes = sorted_classes([day_index[d] for d in args.days])
-output_docx(schedule(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose), args)
