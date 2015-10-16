@@ -26,7 +26,8 @@ def output():
     elif request.form['output'] == 'docx':
         tf = NamedTemporaryFile(suffix='.docx')
         output_docx(course, semester, year, tf.name)
-        return send_file(tf.name, attachment_filename='syllabus.docx', as_attachment=True)
+        filename = semester + year + 'Syllabus.docx'
+        return send_file(tf.name, attachment_filename=filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
