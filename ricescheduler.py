@@ -12,7 +12,7 @@ def locale():
 def regex(keyword):
     return re.compile('(.*)' + keyword + '(.*)', re.DOTALL)
 
-def url(semester, year): 
+def make_url(semester, year): 
     ''' Takes semester and year as strings, returns url to calendar '''
     baseurl = 'https://registrar.rice.edu/calendars/'
     return baseurl + semester.lower() + year[-2:] + '/'
@@ -84,12 +84,12 @@ def schedule(possible_classes, no_classes, fmt, show_no=None):
 def output_plain(schedule):
     print '\n'.join(schedule)
 
-def output_docx(schedule, semester, year):
+def output_docx(schedule, semester, year, outfile):
     course = ['## ' + d + '\n' for d in schedule]
     course = [d + '[Fill in class plan]\n\n' if 'NO CLASS' not in d else d for d in course]
     md_args = ['--template=./templates/syllabus.md', '--to=markdown',
             '--variable=semester:' + semester.capitalize(), '--variable=year:' + year]
     md_output = pypandoc.convert('\n'.join(course), 'md', 'md', md_args)
     docx_args = ['--reference-docx=./templates/syllabus.docx']
-    docx_output = pypandoc.convert(md_output, 'docx', 'md', docx_args, outputfile='output.docx')
+    docx_output = pypandoc.convert(md_output, 'docx', 'md', docx_args, outputfile=outfile)
     assert docx_output == ''

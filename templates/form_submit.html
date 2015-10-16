@@ -4,7 +4,7 @@
     </head>
     <body>
                 <p>What days does your class meet?</p></p>
-                <form method="post" action="{{ url_for('classes') }}">
+                <form method="post" action="{{ url_for('output') }}">
                   <select name="semester">
                       <option value="Spring">Spring</option>
                       <option value="Fall">Fall</option>
@@ -13,12 +13,17 @@
                       {% for year in years %}
                           <option value="{{year}}">{{year}}</option>
                       {% endfor %}
-                  </select><br/>
+                  </select><br/><br/>
                   <input type="checkbox" name="days" value="Monday">Monday<br/>
                   <input type="checkbox" name="days" value="Tuesday">Tuesday<br/>
                   <input type="checkbox" name="days" value="Wednesday">Wednesday<br/>
                   <input type="checkbox" name="days" value="Thursday">Thursday<br/>
                   <input type="checkbox" name="days" value="Friday">Friday<br/>
+                  <br/>
+                  Output: <input type="radio" name="output" value="plain" checked>Plain text
+                  <input type="radio" name="output" value="docx">Full DOCX syllabus<br/>
+                  Show cancelled classes? <input type="radio" name="verbose" value="true" checked>Yes
+                  <input type="radio" name="verbose" value="false">No
                   <input type="submit" value="Submit">
                 </form>
     </body>
