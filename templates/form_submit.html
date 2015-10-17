@@ -33,7 +33,7 @@
                       <input type="checkbox" name="days" value="Friday">Friday
                   </label>
 
-                  <h2>How do you want your output?</h2>
+                  <h2>Choose your output and date format.</h2>
                   
                   <select name="output" class="block col-12 ck mb1 field">
                       <option value="plain">Plain text list of course meetings</option>
@@ -41,6 +41,13 @@
                       <option value="latex">Full LaTeX syllabus template</option>
                       <option value="html">Full HTML syllabus template</option>
                   </select>
+                  <select name="format" class="block col-12 ck mb1 field">
+                      {% for format in formats %}
+                          <option value="{{format}}">{{format}}</option>
+                      {% endfor %}
+                  </select>
+
+
 <!---
                   <h2>Do you want to show cancelled classes?</h2>
 

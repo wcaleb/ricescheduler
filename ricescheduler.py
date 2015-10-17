@@ -21,6 +21,20 @@ def make_url(semester, year):
         url = baseurl + semester.lower() + year[-2:] + '/'
     return url
 
+def date_formats():
+    ''' based on Arrow string formats at http://crsmithdev.com/arrow/#tokens '''
+    date_formats = [('Tuesday, January 12, 2016', 'dddd, MMMM D, YYYY'),
+            ('Tuesday, January 12', 'dddd, MMMM D'),
+            ('Tue., Jan. 12, 2016', 'ddd., MMM. D, YYYY'),
+            ('Tue., Jan. 12', 'ddd., MMM. D'),
+            ('January 12, 2016', 'MMMM D, YYYY'),
+            ('January 12', 'MMMM D'),
+            ('Jan. 12', 'MMM. D'),
+            ('January 12 (Tuesday)', 'MMMM D (dddd)'),
+            ('1/12', 'M/D'),
+            ('01/12', 'MM/DD')]
+    return date_formats
+
 def fetch_registrar_table(url):
     ''' Get academic calendar table from registrar website '''
     html = urllib2.urlopen(url).read()
