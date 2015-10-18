@@ -24,5 +24,5 @@ check_args()
 url = make_url(args.semester, str(args.year))
 day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
 possible_classes, no_classes = sorted_classes([day_index[d] for d in args.days], url)
-# ricescheduler.output_docx(schedule(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose), args.semester, str(args.year), 'output.docx')
-output_plain(schedule(possible_classes, no_classes, 'dddd, MMMM D, YYYY', args.verbose))
+# ricescheduler.output_docx(schedule(possible_classes, no_classes, args.verbose), args.semester, str(args.year), 'output.docx')
+output_plain(schedule(possible_classes, no_classes, args.verbose))

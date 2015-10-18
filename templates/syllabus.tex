@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+%% color for the links 
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{longtable}
+\usepackage{graphicx}
+% We will generate all images so they have a width \maxwidth. This means
+% that they will get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+\else\Gin@nat@width\fi}
+\makeatother
+\let\Oldincludegraphics\includegraphics
+% \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=\maxwidth]{#1}}
+%% hyperlinks
+\usepackage[
+	colorlinks=true,
+	urlcolor=MidnightBlue,
+	plainpages=false,
+  	]{hyperref}% color for the links 
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+$if(numbersections)$
+$else$
+\setcounter{secnumdepth}{0}
+$endif$
+$if(verbatim-in-note)$
+\VerbatimFootnotes % allows verbatim text in footnotes
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+
+$if(listings)$
+\usepackage{listings}
+$endif$
+
+$if(tables)$
+\usepackage{ctable}
+\usepackage{float} % provides the H option for float placement
+$endif$
+
+$if(fancy-enums)$
+% Redefine labelwidth for lists; otherwise, the enumerate package will cause
+% markers to extend beyond the left margin.
+\makeatletter\AtBeginDocument{%
+  \renewcommand{\@listi}
+    {\setlength{\labelwidth}{4em}}
+}\makeatother
+\usepackage{enumerate}
+$endif$
+
+\begin{document}
+
+$if(title)$
+\maketitle
+$endif$
+$for(include-before)$
+$include-before$
+$endfor$
+
+\begin{flushleft}
+$body$
+\end{flushleft}
+
+$for(include-after)$
+$include-after$
+$endfor$
+\end{document}

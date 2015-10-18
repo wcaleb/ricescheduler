@@ -1,30 +1,74 @@
 <html>
     <head>
         <title>Rice Scheduler</title>
+        <link href="http://d2v52k3cl9vedd.cloudfront.net/basscss/7.0.4/basscss.min.css" rel="stylesheet">
     </head>
     <body>
-                <p>What days does your class meet?</p></p>
+        <div class="container px2 sm-px3" style="max-width:50em;">
+        <main>
+                <h1>Rice Syllabus Maker</h1>
+
+                <p>Fill out the form to receive a list of all the dates when your course will meet during the specified semester. Alternatively, you can download a syllabus template (in Word, LaTeX, or HTML formats) prepopulated with a class schedule and other <a href="http://fachandbook.rice.edu/Faculty_Rights,_Privileges,_and_Responsibilities/#D">required information</a> (such as Honor Code and Disability Services statements). This application uses the <a href="https://registrar.rice.edu/students/calendars/">academic calenders</a> posted by the Registrar to determine when classes will be cancelled for holidays or University recesses.</p>
+
+                <h2>Choose your semester.</h2>
+
                 <form method="post" action="{{ url_for('output') }}">
-                  <select name="semester">
+                  <select name="semester" class="ck mb1 field">
                       <option value="Spring">Spring</option>
                       <option value="Fall">Fall</option>
                   </select>
-                  <select name="year">
+                  <select name="year" class="ck mb1 field">
                       {% for year in years %}
                           <option value="{{year}}">{{year}}</option>
                       {% endfor %}
-                  </select><br/><br/>
-                  <input type="checkbox" name="days" value="Monday">Monday<br/>
-                  <input type="checkbox" name="days" value="Tuesday">Tuesday<br/>
-                  <input type="checkbox" name="days" value="Wednesday">Wednesday<br/>
-                  <input type="checkbox" name="days" value="Thursday">Thursday<br/>
-                  <input type="checkbox" name="days" value="Friday">Friday<br/>
+                  </select>
+
+                  <h2>Check all the days your course meets.</h2>
+
+                  <label class="block col-12 mb2">
+                      <input type="checkbox" name="days" value="Monday">Monday
+                      <input type="checkbox" name="days" value="Tuesday">Tuesday
+                      <input type="checkbox" name="days" value="Wednesday">Wednesday
+                      <input type="checkbox" name="days" value="Thursday">Thursday
+                      <input type="checkbox" name="days" value="Friday">Friday
+                  </label>
+
+                  <h2>Choose your output and date format.</h2>
+                  
+                  <select name="output" class="block col-12 ck mb1 field">
+                      <option value="plain">Plain text list of course meetings</option>
+                      <option value="docx">Full DOCX syllabus template</option>
+                      <option value="latex">Full LaTeX syllabus template</option>
+                      <option value="html">Full HTML syllabus template</option>
+                  </select>
+                  <select name="format" class="block col-12 ck mb1 field">
+                      {% for format in formats %}
+                          <option value="{{format}}">{{format}}</option>
+                      {% endfor %}
+                  </select>
+
+
+<!---
+                  <h2>Do you want to show cancelled classes?</h2>
+
+                  <p>You can choose to display these cancelled dates (with "NO CLASS" printed next to them) or hide them from your list.</p>
+                  
+                  <label class="block col-12 mb2">
+                      <input type="radio" name="verbose" value="true" checked>Show dates with no class
+                      <input type="radio" name="verbose" value="false">Hide dates with no class
+                  </label>
+--->
+
                   <br/>
-                  Output: <input type="radio" name="output" value="plain" checked>Plain text
-                  <input type="radio" name="output" value="docx">Full DOCX syllabus<br/>
-                  Show cancelled classes? <input type="radio" name="verbose" value="true" checked>Yes
-                  <input type="radio" name="verbose" value="false">No
-                  <input type="submit" value="Submit">
+
+                  <button type="submit" class="btn btn-primary">Submit</button>
+
+                  <br/><br/>
+
+                  <p>Created by <a href="http://wcm1.web.rice.edu">Caleb McDaniel</a>. Report problems by email or on <a href="https://github.com/wcaleb/ricescheduler">GitHub</a>.</p> 
+
                 </form>
+        </main>
+        </div>
     </body>
 </html>

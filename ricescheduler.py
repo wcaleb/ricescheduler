@@ -15,7 +15,25 @@ def regex(keyword):
 def make_url(semester, year): 
     ''' Takes semester and year as strings, returns url to calendar '''
     baseurl = 'https://registrar.rice.edu/calendars/'
-    return baseurl + semester.lower() + year[-2:] + '/'
+    if semester.lower() == 'fall' and year == '2016':
+        url = 'https://registrar.rice.edu/content.aspx?id=2147483980'
+    else:
+        url = baseurl + semester.lower() + year[-2:] + '/'
+    return url
+
+def date_formats():
+    ''' based on Arrow string formats at http://crsmithdev.com/arrow/#tokens '''
+    date_formats = [('Tuesday, January 12, 2016', 'dddd, MMMM D, YYYY'),
+            ('Tuesday, January 12', 'dddd, MMMM D'),
+            ('Tue., Jan. 12, 2016', 'ddd., MMM. D, YYYY'),
+            ('Tue., Jan. 12', 'ddd., MMM. D'),
+            ('January 12, 2016', 'MMMM D, YYYY'),
+            ('January 12', 'MMMM D'),
+            ('Jan. 12', 'MMM. D'),
+            ('January 12 (Tuesday)', 'MMMM D (dddd)'),
+            ('1/12', 'M/D'),
+            ('01/12', 'MM/DD')]
+    return date_formats
 
 def fetch_registrar_table(url):
     ''' Get academic calendar table from registrar website '''
@@ -71,25 +89,42 @@ def sorted_classes(weekdays, url):
     possible_classes = [d for d in semester if locale().day_name(d.isoweekday()) in weekdays]
     return possible_classes, no_classes
 
-def schedule(possible_classes, no_classes, fmt, show_no=None):
+def schedule(possible_classes, no_classes, show_no=None, fmt=None):
     ''' Take lists of Arrow objects, return list of course meetings as strings '''
     course = []
+    date_format = fmt if fmt else 'dddd, MMMM D, YYYY'
     for d in possible_classes:
         if d not in no_classes:
-            course.append(d.format(fmt))
+            course.append(d.format(date_format))
         elif show_no:
-            course.append(d.format(fmt) + ' - NO CLASS')
+            course.append(d.format(date_format) + ' - NO CLASS')
     return course
 
 def output_plain(schedule):
     print '\n'.join(schedule)
 
-def output_docx(schedule, semester, year, outfile):
+def output_markdown(schedule, semester, year):
     course = ['## ' + d + '\n' for d in schedule]
     course = [d + '[Fill in class plan]\n\n' if 'NO CLASS' not in d else d for d in course]
     md_args = ['--template=./templates/syllabus.md', '--to=markdown',
             '--variable=semester:' + semester.capitalize(), '--variable=year:' + year]
-    md_output = pypandoc.convert('\n'.join(course), 'md', 'md', md_args)
+    markdown = pypandoc.convert('\n'.join(course), 'md', 'md', md_args)
+    return markdown
+
+def output_docx(schedule, semester, year, outfile):
+    markdown = output_markdown(schedule, semester, year)
     docx_args = ['--reference-docx=./templates/syllabus.docx']
-    docx_output = pypandoc.convert(md_output, 'docx', 'md', docx_args, outputfile=outfile)
+    docx_output = pypandoc.convert(markdown, 'docx', 'md', docx_args, outputfile=outfile)
     assert docx_output == ''
+
+def output_latex(schedule, semester, year, outfile):
+    markdown = output_markdown(schedule, semester, year)
+    latex_args = ['--standalone', '--template=./templates/syllabus.tex']
+    latex_output = pypandoc.convert(markdown, 'latex', 'md', latex_args, outputfile=outfile)
+    assert latex_output == ''
+    
+def output_html(schedule, semester, year, outfile):
+    markdown = output_markdown(schedule, semester, year)
+    html_args = ['--standalone']
+    html_output = pypandoc.convert(markdown, 'html', 'md', html_args, outputfile=outfile)
+    assert html_output == ''
