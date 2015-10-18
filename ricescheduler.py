@@ -28,7 +28,7 @@ def range_of_days(start, end):
 
 def clean_cell(td):
     ''' Remove whitespace from a registrar table cell '''
-    return re.sub(r"\s+", "", td, flags=re.UNICODE)
+    return re.sub(r"\s+", "", td)
 
 def parse_td_for_dates(td):
     ''' Get date or date range as lists from cell in registrar's table '''

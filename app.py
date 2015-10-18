@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask, render_template, request, url_for, send_file
 from tempfile import NamedTemporaryFile
 from ricescheduler import make_url, sorted_classes, schedule, output_plain, output_docx
@@ -30,4 +32,4 @@ def output():
         return send_file(tf.name, attachment_filename=filename, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=3000, debug=True)
