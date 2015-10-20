@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 from flask import Flask, render_template, request, url_for, send_file
 from tempfile import NamedTemporaryFile
 from ricescheduler import make_url, sorted_classes, schedule, output_plain, output_docx, output_latex, output_html, date_formats
@@ -37,10 +38,14 @@ def output():
         filename = semester + year + 'Syllabus.tex'
         return send_file(tf.name, attachment_filename=filename, as_attachment=True)
     elif request.form['output'] == 'html':
-        tf = NamedTemporaryFile(suffix='.html')
-        output_html(course, semester, year, tf.name)
-        filename = semester + year + 'Syllabus.html'
-        return send_file(tf.name, attachment_filename=filename, as_attachment=True)
+        try:
+            tf = NamedTemporaryFile(suffix='.html')
+            html_args = ['--standalone', '--template=' + os.path.dirname(os.path.abspath(__file__)) + '/templates/syllabus.html']
+            output_html(course, semester, year, html_args, tf.name)
+            filename = semester + year + 'Syllabus.html'
+            return send_file(tf.name, attachment_filename=filename, as_attachment=True)
+        except Exception as e:
+            return str(e)
 
 if __name__ == '__main__':
     app.run()

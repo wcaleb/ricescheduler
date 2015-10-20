@@ -123,7 +123,7 @@ def output_latex(schedule, semester, year, outfile):
     latex_output = pypandoc.convert(markdown, 'latex', 'md', latex_args, outputfile=outfile)
     assert latex_output == ''
     
-def output_html(schedule, semester, year, outfile):
+def output_html(schedule, semester, year, args, outfile):
     markdown = output_markdown(schedule, semester, year)
     html_args = ['--standalone', '--template=/var/www/webapps/apps/ricescheduler/templates/syllabus.html']
     html_output = pypandoc.convert(markdown, 'html', 'md', html_args, outputfile=outfile)
