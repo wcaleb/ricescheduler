@@ -12,7 +12,7 @@
 
                 <h2>Choose your semester.</h2>
 
-                <form method="post" action="{{ url_for('output') }}">
+                <form method="post" action="{{ url_for('results') }}">
                   <select name="semester" class="ck mb1 field">
                       <option value="Spring">Spring</option>
                       <option value="Fall">Fall</option>
@@ -36,7 +36,7 @@
                   <select name="output" class="block col-12 ck mb1 field">
                       <option value="plain">Plain text list of course meetings</option>
                       <option value="docx">Full DOCX syllabus template</option>
-                      <option value="latex">Full LaTeX syllabus template</option>
+                      <option value="tex">Full LaTeX syllabus template</option>
                       <option value="html">Full HTML syllabus template</option>
                   </select>
                   <select name="format" class="block col-12 ck mb1 field">

@@ -3,7 +3,7 @@
 import os
 from flask import Flask, render_template, request, url_for, send_file
 from tempfile import NamedTemporaryFile
-from ricescheduler import make_url, sorted_classes, schedule, output_plain, output_docx, output_latex, output_html, date_formats
+from ricescheduler import make_url, sorted_classes, schedule, output, date_formats
 
 app = Flask(__name__, static_url_path = "")
 
@@ -13,39 +13,28 @@ def form():
     formats = [t[0] for t in date_formats()]
     return render_template('form_submit.html', years=years, formats=formats)
 
-@app.route('/output/', methods=['POST'])
-def output():
+@app.route('/results/', methods=['POST'])
+def results():
 
     semester = request.form['semester']
     year = request.form['year']
     weekdays = request.form.getlist('days')
+    date_fmt = [b for (a, b) in date_formats() if a == request.form['format']][0]
+    output_fmt = request.form['output']
+
     url = make_url(semester, year)
     possible_classes, no_classes = sorted_classes(weekdays, url)
-    verbose = True
-    fmt = [b for (a, b) in date_formats() if a == request.form['format']][0]
-    course = schedule(possible_classes, no_classes, verbose, fmt) 
+    course = schedule(possible_classes, no_classes, show_no=True, fmt=date_fmt) 
 
-    if request.form['output'] == 'plain':
+    if output_fmt == 'plain':
         return '<br/>'.join(course)
-    elif request.form['output'] == 'docx':
-        tf = NamedTemporaryFile(suffix='.docx')
-        output_docx(course, semester, year, tf.name)
-        filename = semester + year + 'Syllabus.docx'
+    else:
+        suffix = '.' + output_fmt
+        templatedir = os.path.dirname(os.path.abspath(__file__)) + '/templates'
+        tf = NamedTemporaryFile(suffix=suffix)
+        output(course, semester, year, output_fmt, templatedir=templatedir, outfile=tf.name)
+        filename = semester + year + 'Syllabus' + suffix
         return send_file(tf.name, attachment_filename=filename, as_attachment=True)
-    elif request.form['output'] == 'latex':
-        tf = NamedTemporaryFile(suffix='.tex')
-        output_latex(course, semester, year, tf.name)
-        filename = semester + year + 'Syllabus.tex'
-        return send_file(tf.name, attachment_filename=filename, as_attachment=True)
-    elif request.form['output'] == 'html':
-        try:
-            tf = NamedTemporaryFile(suffix='.html')
-            html_args = ['--standalone', '--template=' + os.path.dirname(os.path.abspath(__file__)) + '/templates/syllabus.html']
-            output_html(course, semester, year, html_args, tf.name)
-            filename = semester + year + 'Syllabus.html'
-            return send_file(tf.name, attachment_filename=filename, as_attachment=True)
-        except Exception as e:
-            return str(e)
 
 if __name__ == '__main__':
     app.run()
