@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 
 import re, sys, urllib2
 import arrow # http://crsmithdev.com/arrow/
@@ -106,25 +106,25 @@ def output_plain(schedule):
 def output_markdown(schedule, semester, year):
     course = ['## ' + d + '\n' for d in schedule]
     course = [d + '[Fill in class plan]\n\n' if 'NO CLASS' not in d else d for d in course]
-    md_args = ['--template=./templates/syllabus.md', '--to=markdown',
+    md_args = ['--template=/var/www/webapps/apps/ricescheduler/templates/syllabus.md', '--to=markdown',
             '--variable=semester:' + semester.capitalize(), '--variable=year:' + year]
     markdown = pypandoc.convert('\n'.join(course), 'md', 'md', md_args)
     return markdown
 
 def output_docx(schedule, semester, year, outfile):
     markdown = output_markdown(schedule, semester, year)
-    docx_args = ['--reference-docx=./templates/syllabus.docx']
+    docx_args = ['--reference-docx=/var/www/webapps/apps/ricescheduler/templates/syllabus.docx']
     docx_output = pypandoc.convert(markdown, 'docx', 'md', docx_args, outputfile=outfile)
     assert docx_output == ''
 
 def output_latex(schedule, semester, year, outfile):
     markdown = output_markdown(schedule, semester, year)
-    latex_args = ['--standalone', '--template=./templates/syllabus.tex']
+    latex_args = ['--standalone', '--template=/var/www/webapps/apps/ricescheduler/templates/syllabus.tex']
     latex_output = pypandoc.convert(markdown, 'latex', 'md', latex_args, outputfile=outfile)
     assert latex_output == ''
     
 def output_html(schedule, semester, year, outfile):
     markdown = output_markdown(schedule, semester, year)
-    html_args = ['--standalone']
+    html_args = ['--standalone', '--template=/var/www/webapps/apps/ricescheduler/templates/syllabus.html']
     html_output = pypandoc.convert(markdown, 'html', 'md', html_args, outputfile=outfile)
     assert html_output == ''
