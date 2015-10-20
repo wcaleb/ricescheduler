@@ -12,7 +12,7 @@ def form():
     formats = [t[0] for t in date_formats()]
     return render_template('form_submit.html', years=years, formats=formats)
 
-@app.route('/output/', methods=['POST', 'GET'])
+@app.route('/output/', methods=['POST'])
 def output():
 
     semester = request.form['semester']
@@ -38,9 +38,9 @@ def output():
         return send_file(tf.name, attachment_filename=filename, as_attachment=True)
     elif request.form['output'] == 'html':
         tf = NamedTemporaryFile(suffix='.html')
-        filename = semester + year + 'Syllabus.html'
         output_html(course, semester, year, tf.name)
+        filename = semester + year + 'Syllabus.html'
         return send_file(tf.name, attachment_filename=filename, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000, debug=False)
+    app.run()
