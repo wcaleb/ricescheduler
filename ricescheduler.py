@@ -15,10 +15,7 @@ def regex(keyword):
 def make_url(semester, year): 
     ''' Takes semester and year as strings, returns url to calendar '''
     baseurl = 'https://registrar.rice.edu/calendars/'
-    if semester.lower() == 'fall' and year == '2016':
-        url = 'https://registrar.rice.edu/content.aspx?id=2147483980'
-    else:
-        url = baseurl + semester.lower() + year[-2:] + '/'
+    url = baseurl + semester.lower() + year[-2:] + '/'
     return url
 
 def date_formats():
@@ -68,18 +65,22 @@ def parse_registrar_table(table):
     no_classes = []
     for row in table.findAll('tr'):
         cells = row.findAll('td')
-        days = clean_cell(cells[0].get_text())
-        try:
-            description = cells[1].get_text()
-        except:
-            pass
-        if re.match(regex('FIRST DAY OF CLASSES'), description):
-            first_day = parse_td_for_dates(days)
-        if re.match(regex('LAST DAY OF CLASSES'), description):
-            last_day = parse_td_for_dates(days)
-        for date in parse_td_for_dates(days):
-            if re.match(regex('NO SCHEDULED CLASSES'), description):
-                no_classes.append(date)
+        if len(cells) > 1:
+           try:
+               days = clean_cell(cells[0].get_text())
+           except:
+               pass
+           try:
+               description = cells[1].get_text()
+           except:
+               pass
+           if re.match(regex('FIRST DAY OF CLASSES'), description):
+               first_day = parse_td_for_dates(days)
+           if re.match(regex('LAST DAY OF CLASSES'), description):
+               last_day = parse_td_for_dates(days)
+           for date in parse_td_for_dates(days):
+               if re.match(regex('NO SCHEDULED CLASSES'), description):
+                   no_classes.append(date)
     return first_day, last_day, no_classes
 
 def sorted_classes(weekdays, url):
