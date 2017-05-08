@@ -1,5 +1,5 @@
 import argparse 
-from ricescheduler import make_url, sorted_classes, schedule, output_plain, output_docx
+from ricescheduler import make_url, sorted_classes, schedule, output, date_formats
 
 parser = argparse.ArgumentParser()
 parser.add_argument('semester', help='Spring or Fall')
@@ -23,6 +23,8 @@ def check_args():
 check_args()
 url = make_url(args.semester, str(args.year))
 day_index = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'}
-possible_classes, no_classes = sorted_classes([day_index[d] for d in args.days], url)
+weekdays = [day_index[d] for d in args.days]
+possible_classes, no_classes = sorted_classes(weekdays, url)
+course = schedule(possible_classes, no_classes, show_no=True)
+print course
 # ricescheduler.output_docx(schedule(possible_classes, no_classes, args.verbose), args.semester, str(args.year), 'output.docx')
-output_plain(schedule(possible_classes, no_classes, args.verbose))
