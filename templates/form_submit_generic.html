@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <title>Generic Syllabus Maker</title>
+        <link href="http://d2v52k3cl9vedd.cloudfront.net/basscss/7.0.4/basscss.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container px2 sm-px3" style="max-width:50em;">
+        <main>
+                <h1>Generic Syllabus Maker</h1>
+
+                <p>Fill out the form to receive a list of all the dates when your course will meet during the specified semester.</p>
+
+                <form method="post" action="{{ url_for('classes') }}">
+
+                  <h3>Choose the year of your semester.</h3>
+
+                  <select name="year" class="ck mb1 field">
+                      {% for year in years %}
+                          <option value="{{year}}">{{year}}</option>
+                      {% endfor %}
+                  </select>
+
+                  <h3>Choose the first class day of your semester.</h3>
+
+                  <select name="start-month" class="ck mb1 field">
+                      {% for month in months %}
+                          <option value="{{month}}">{{month}}</option>
+                      {% endfor %}
+                  </select>
+                  <select name="start-day" class="ck mb1 field">
+                      {% for day in ddays %}
+                          <option value="{{day}}">{{day}}</option>
+                      {% endfor %}
+                  </select>
+
+                  <h3>Choose the last class day of your semester.</h3>
+
+                  <select name="last-month" class="ck mb1 field">
+                      {% for month in months %}
+                          <option value="{{month}}">{{month}}</option>
+                      {% endfor %}
+                  </select>
+                  <select name="last-day" class="ck mb1 field">
+                      {% for day in ddays %}
+                          <option value="{{day}}">{{day}}</option>
+                      {% endfor %}
+                  </select>
+
+                  <h3>Check all the days your course meets.</h3>
+
+                      <input type="checkbox" name="days" value="Monday">Monday</input>
+                      <input type="checkbox" name="days" value="Tuesday">Tuesday</input>
+                      <input type="checkbox" name="days" value="Wednesday">Wednesday</input>
+                      <input type="checkbox" name="days" value="Thursday">Thursday</input>
+                      <input type="checkbox" name="days" value="Friday">Friday</input>
+
+                  <h3>Choose your date format.</h3>
+                  
+                  <select name="format" class="block col-12 ck mb1 field">
+                      {% for format in formats %}
+                          <option value="{{format}}">{{format}}</option>
+                      {% endfor %}
+                  </select>
+
+                  <br/>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+                </form>
+
+                  <p>Created by <a href="http://wcm1.web.rice.edu">Caleb McDaniel</a>. Report problems by email or on <a href="https://github.com/wcaleb/ricescheduler">GitHub</a>. See also the full-featured <a href="/syllabusmaker/">Rice version</a> of the syllabus maker.</p> 
+
+        </main>
+        </div>
+    </body>
+</html>

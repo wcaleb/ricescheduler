@@ -83,9 +83,8 @@ def parse_registrar_table(table):
                    no_classes.append(date)
     return first_day, last_day, no_classes
 
-def sorted_classes(weekdays, url):
+def sorted_classes(weekdays, first_day, last_day, no_classes):
     ''' Take class meetings as list of day names, return lists of Arrow objects '''
-    first_day, last_day, no_classes = parse_registrar_table(fetch_registrar_table(url))
     semester = range_of_days(first_day[0], last_day[0])
     possible_classes = [d for d in semester if locale().day_name(d.isoweekday()) in weekdays]
     return possible_classes, no_classes
