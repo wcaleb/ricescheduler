@@ -29,7 +29,8 @@ def date_formats():
             ('Jan. 12', 'MMM. D'),
             ('January 12 (Tuesday)', 'MMMM D (dddd)'),
             ('1/12', 'M/D'),
-            ('01/12', 'MM/DD')]
+            ('01/12', 'MM/DD'),
+            ('2016-01-12', 'YYYY-MM-DD')]
     return date_formats
 
 def fetch_registrar_table(url):
