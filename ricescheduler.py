@@ -75,12 +75,12 @@ def parse_registrar_table(table):
                description = cells[1].get_text()
            except:
                pass
-           if re.match(regex('FIRST DAY OF CLASSES'), description):
+           if re.match(regex('(?i)FIRST DAY OF CLASSES'), description):
                first_day = parse_td_for_dates(days)
-           if re.match(regex('LAST DAY OF CLASSES'), description):
+           if re.match(regex('(?i)LAST DAY OF CLASSES'), description):
                last_day = parse_td_for_dates(days)
            for date in parse_td_for_dates(days):
-               if re.match(regex('NO SCHEDULED CLASSES'), description):
+               if re.match(regex('(?i)NO SCHEDULED CLASSES'), description):
                    no_classes.append(date)
     return first_day, last_day, no_classes
 
