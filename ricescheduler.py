@@ -24,6 +24,7 @@ def date_formats():
             ('Tuesday, January 12', 'dddd, MMMM D'),
             ('Tue., Jan. 12, 2016', 'ddd., MMM. D, YYYY'),
             ('Tue., Jan. 12', 'ddd., MMM. D'),
+            ('Tue. Jan. 12', 'ddd. MMM. D'),
             ('January 12, 2016', 'MMMM D, YYYY'),
             ('January 12', 'MMMM D'),
             ('Jan. 12', 'MMM. D'),
